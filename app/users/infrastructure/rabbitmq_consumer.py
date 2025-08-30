@@ -6,8 +6,7 @@ from sqlalchemy.orm import Session
 from .database import SessionLocal, Base, engine
 from ..infrastructure.db_repository import SqlAlchemyUserRepository
 from ..application.commands import CreateUserCommand, CreateUserHandler
-import logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", force=True)
+
 
 RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/")
 QUEUE_NAME = os.getenv("RABBITMQ_QUEUE", "user.create")
@@ -41,14 +40,14 @@ def main():
 
     def callback(ch, method, properties, body):
         payload = json.loads(body.decode())
-        logging.info(f"Received create user command for {payload.get('email')}")
+        print(f"Received create user command for {payload.get('email')}")
         try: 
             process_create_user(payload)
-            logging.info(f"User {payload.get('email')} created successfully")
-            ch.basic_ack(delivery_tag = method.delivery_tag)
+            print(f"User {payload.get('email')} created successfully")
+            ch.basic_nack(delivery_tag = method.delivery_tag)
         except Exception as e: 
-            logging.error(f"Error processing user {payload.get('email')}: {e}")
-            ch.basic_ack(delivery_tag=method.delivery_tag, requeue=False)
+            print(f"Error processing user {payload.get('email')}: {e}")
+            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
         
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=QUEUE_NAME, on_message_callback=callback)

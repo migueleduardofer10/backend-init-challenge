@@ -9,7 +9,7 @@ def publish_create_user(name: str, email:str, password: str):
     params = pika.URLParameters(RABBITMQ_URL)
     connection = pika.BlockingConnection(params)
     channel = connection.channel()
-    channel.queue_declare(queue=QUEUE_NAME, durable=TRUE)
+    channel.queue_declare(queue=QUEUE_NAME, durable=True)
 
     payload={"name": name, "email": email, "password":password}
     channel.basic_publish(
