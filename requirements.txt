@@ -7,3 +7,4 @@ bcrypt
 pika
 pytest
 pytest-cov
+pydantic-settings

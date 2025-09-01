@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .user import User
+from modules.users.domain.entities.user import User
 
 class UserRepository(ABC):
 

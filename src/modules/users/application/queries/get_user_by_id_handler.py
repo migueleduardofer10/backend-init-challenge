@@ -1,5 +1,6 @@
-from ..domain.user_repository import UserRepository
-from ..domain.user import User
+from modules.users.domain.ports.user_repository import UserRepository
+from modules.users.domain.entities.user import User
+
 
 class GetUserByIdQuery:
     def __init__(self, user_id: int):

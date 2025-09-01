@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
-from ..domain.user import User
-from ..domain.user_repository import UserRepository
-from .models import UserModel
+
+from modules.users.domain.entities.user import User
+from modules.users.domain.ports.user_repository import UserRepository
+from modules.users.infrastructure.schemas.user_model import UserModel
+
 
 class SqlAlchemyUserRepository(UserRepository):
     def __init__(self, session: Session):
