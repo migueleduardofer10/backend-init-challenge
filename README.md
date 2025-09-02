@@ -49,7 +49,7 @@ Esto levantará:
 La API quedará disponible en:
 
 ```
-http://localhost:8000
+http://localhost:8000/api
 ```
 
 Puedes probar los endpoints con Swagger UI:
