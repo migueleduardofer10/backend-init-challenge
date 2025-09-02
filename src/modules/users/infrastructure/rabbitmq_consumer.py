@@ -4,7 +4,7 @@ import pika
 from core.config import settings
 from core.db import SessionLocal
 from modules.users.infrastructure.repositories.user_repo_sqlalchemy import SqlAlchemyUserRepository
-from modules.users.application.commands import PersistUserHandler, CreateUserCommand
+from modules.users.application.commands import PersistUserHandler
 
 RABBITMQ_URL = settings.RABBITMQ_URL
 QUEUE_NAME = settings.RABBITMQ_QUEUE
@@ -16,7 +16,7 @@ def build_persist_user_handler() -> PersistUserHandler:
     
 def process_create_user(payload: dict):
     handler = build_persist_user_handler()
-    command = CreateUserCommand(
+    command = PersistUserHandler(
         name=payload["name"],
         email=payload["email"],
         password=payload["password"],

@@ -1,23 +1,24 @@
 from sqlalchemy.orm import Session
-
 from modules.users.domain.entities.user import User
 from modules.users.domain.ports.user_repository import UserRepository
 from modules.users.infrastructure.schemas.user_model import UserModel
-
+from modules.users.infrastructure.mappers.user_mapper import UserMapper
 
 class SqlAlchemyUserRepository(UserRepository):
     def __init__(self, session: Session):
         self.session = session
 
     def save(self, user: User) -> User:
-        db_user = UserModel(name=user.name, email=user.email, password=user.password)
-        self.session.add(db_user)
+        model = UserMapper.to_model(user)
+        self.session.add(model)
         self.session.commit()
-        self.session.refresh(db_user)
-        return User(id=db_user.id, name=db_user.name, email=db_user.email, password=db_user.password)
+        self.session.refresh(model)
+        return UserMapper.to_entity(model)
 
     def get_by_id(self, user_id: int) -> User | None:
-        db_user = self.session.get(UserModel, user_id)
-        if not db_user:
-            return None
-        return User(id=db_user.id, name=db_user.name, email=db_user.email, password=db_user.password)
+        model = self.session.get(UserModel, user_id)
+        return UserMapper.to_entity(model) if model else None
+
+    def get_by_email(self, email: str) -> User | None:
+        model = self.session.query(UserModel).filter(UserModel.vc_email == email).first()
+        return UserMapper.to_entity(model) if model else None
