@@ -138,8 +138,6 @@ tests/
   - `modules/`: contexts (users, auth) organizados en domain / application / infrastructure.
   - `tests/`: pruebas unitarias e integración.
   - `unit/`: tests de dominio y aplicación aislados.
-  - `shared/`: fakes, fixtures y configuraciones de pytest.
-
 ---
 
 ## 🏗️ Arquitectura
