@@ -1,18 +1,19 @@
 from fastapi import APIRouter, Depends
 from dependency_injector.wiring import inject, Provide
 
-from app.core.providers import Container
-from modules.users.application.dtos import CreateUserDTO
+from core.container import Container
+from modules.users.application.dtos import UserRequestDTO
 from modules.users.application.mappers.request_mapper import UserRequestMapper
-from modules.users.application.handlers.publish_user_handler import PublishUserHandler
-from modules.users.application.handlers.get_user_by_id_handler import GetUserByIdHandler, GetUserByIdQuery
+from modules.users.application.commands import PublishUserHandler
+from modules.users.application.queries import GetUserByIdQuery, GetUserByIdHandler
+
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("/")
 @inject
 def create_user(
-    dto: CreateUserDTO,
+    dto: UserRequestDTO,
     handler: PublishUserHandler = Depends(Provide[Container.publish_user_handler]),
 ):
     command = UserRequestMapper.to_command(dto)

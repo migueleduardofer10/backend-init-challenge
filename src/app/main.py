@@ -5,7 +5,7 @@ from app.api.users_http import router as users_router
 from app.api.auth_http import router as auth_router
 from core.config import settings
 from core.db import init_db
-from app.core.container import Container  
+from core.container import Container  
 
 # ---- Inicializar DB ----
 init_db()

@@ -2,9 +2,9 @@ import json
 import pika
 from dependency_injector.wiring import inject, Provide
 
-from app.core.container import Container
+from core.container import Container
 from modules.users.application.commands import CreateUserCommand
-from modules.users.application.handlers.persist_user_handler import PersistUserHandler
+from modules.users.application.commands import PersistUserHandler
 
 
 def process_create_user(payload: dict, handler: PersistUserHandler):
@@ -22,10 +22,10 @@ def main():
     container.init_resources()
     container.wire(modules=[__name__])
 
-    params = pika.URLParameters(container.config().RABBITMQ_URL())
+    params = pika.URLParameters(container.config().RABBITMQ_URL)
     connection = pika.BlockingConnection(params)
     channel = connection.channel()
-    channel.queue_declare(queue=container.config().RABBITMQ_QUEUE(), durable=True)
+    channel.queue_declare(queue=container.config().RABBITMQ_QUEUE, durable=True)
 
     @inject
     def callback(
@@ -33,10 +33,13 @@ def main():
         method,
         properties,
         body,
-        handler: PersistUserHandler = Provide[Container.persist_user_handler],
     ):
         payload = json.loads(body.decode())
         print(f"Received create user command for {payload.get('email')}")
+        
+        # 🔑 resolver instancia real del handler
+        handler = container.persist_user_handler()
+
         try:
             process_create_user(payload, handler)
             print(f"User {payload.get('email')} created successfully")
@@ -47,7 +50,7 @@ def main():
 
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(
-        queue=container.config().RABBITMQ_QUEUE(),
+        queue=container.config().RABBITMQ_QUEUE,
         on_message_callback=callback,
     )
 

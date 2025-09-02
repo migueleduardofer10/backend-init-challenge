@@ -5,9 +5,8 @@ from core.db import SessionLocal
 from modules.users.infrastructure.rabbitmq_publisher import RabbitMQPublisher
 from modules.users.infrastructure.repositories.user_repo_sqlalchemy import SqlAlchemyUserRepository
 
-from modules.users.application.handlers.publish_user_handler import PublishUserHandler
-from modules.users.application.handlers.get_user_by_id_handler import GetUserByIdHandler
-from modules.users.application.handlers.persist_user_handler import PersistUserHandler
+from modules.users.application.commands import PublishUserHandler, PersistUserHandler
+from modules.users.application.queries import GetUserByIdQuery, GetUserByIdHandler
 from modules.users.domain.policies import PasswordPolicy
 
 def _session_resource():
@@ -20,8 +19,7 @@ def _session_resource():
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "app.interfaces.http.users_controller",
-            "app.modules.users.interfaces.consumer",
+            "modules.users.infrastructure.rabbitmq_consumer",
         ]
     )
 
@@ -58,5 +56,5 @@ class Container(containers.DeclarativeContainer):
     persist_user_handler = providers.Factory(
         PersistUserHandler,
         repo=user_repository,
-        policy=password_policy,
+        password_policy=password_policy,
     )

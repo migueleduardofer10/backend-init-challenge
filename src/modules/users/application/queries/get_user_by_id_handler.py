@@ -1,7 +1,7 @@
 from modules.users.domain.ports.user_repository import UserRepository
 from modules.users.application.dtos import UserResponseDTO
-from modules.users.application.mappers.response_mapper import UserResponseMapper
-
+from modules.users.infrastructure.mappers.response_mapper import UserResponseMapper
+from modules.users.application.queries import GetUserByIdQuery
 
 class GetUserByIdHandler:
     def __init__(self, repo: UserRepository):

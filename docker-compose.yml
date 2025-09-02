@@ -18,6 +18,11 @@ services:
     ports:
       - "5672:5672"     
       - "15672:15672"  
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
@@ -47,5 +52,5 @@ services:
       db:
         condition: service_healthy
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
     command: ["python", "-m", "modules.users.infrastructure.rabbitmq_consumer"]

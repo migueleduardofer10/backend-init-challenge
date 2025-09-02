@@ -1,4 +1,4 @@
-# modules/users/application/queries/__init__.py
-from .get_user_by_id_handler import GetUserByIdQuery, GetUserByIdHandler
+from .get_user_by_id_query import GetUserByIdQuery
+from .get_user_by_id_handler import GetUserByIdHandler
 
 __all__ = ["GetUserByIdQuery", "GetUserByIdHandler"]

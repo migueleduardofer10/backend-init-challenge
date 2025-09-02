@@ -4,7 +4,13 @@ from enum import Enum
 from modules.users.domain.value_objects import Email
 from modules.users.domain.errors import InvalidStateTransitionError
 
+class UserStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    SUSPENDED = "SUSPENDED"
+    DELETED = "DELETED"
 
+    def __post_init__(self):
+        self._validate_name()
 
 
 @dataclass
@@ -18,13 +24,6 @@ class User:
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
-class UserStatus(str, Enum):
-    ACTIVE = "ACTIVE"
-    SUSPENDED = "SUSPENDED"
-    DELETED = "DELETED"
-
-    def __post_init__(self):
-        self._validate_name()
 
     # --- Reglas internas ---
     def _validate_name(self):
