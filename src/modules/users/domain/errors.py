@@ -12,3 +12,6 @@ class PasswordPolicyError(DomainError):
 
 class InvalidStateTransitionError(DomainError):
     pass
+
+class UserNotFoundError(DomainError):
+    pass

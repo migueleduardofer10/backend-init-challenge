@@ -46,6 +46,7 @@ class Container(containers.DeclarativeContainer):
     publish_user_handler = providers.Factory(
         PublishUserHandler,
         publisher=publisher,
+        password_policy=password_policy,
     )
 
     get_user_by_id_handler = providers.Factory(
