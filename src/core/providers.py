@@ -1,39 +1,62 @@
-# app/core/providers.py
-from typing import Generator
-from fastapi import Depends
-from sqlalchemy.orm import Session
-
+from dependency_injector import containers, providers
 from core.config import settings
-from core.db import get_session
+from core.db import SessionLocal
 
 from modules.users.infrastructure.rabbitmq_publisher import RabbitMQPublisher
 from modules.users.infrastructure.repositories.user_repo_sqlalchemy import SqlAlchemyUserRepository
-from modules.users.application.commands import CreateUserHandler, PersistUserHandler
-from modules.users.application.queries import GetUserByIdHandler
 
-def get_settings():
-    return settings
+from modules.users.application.handlers.publish_user_handler import PublishUserHandler
+from modules.users.application.handlers.get_user_by_id_handler import GetUserByIdHandler
+from modules.users.application.handlers.persist_user_handler import PersistUserHandler
+from modules.users.domain.policies import PasswordPolicy
 
-def get_publisher(cfg = Depends(get_settings)) -> RabbitMQPublisher:
-    return RabbitMQPublisher(
-        url=cfg.RABBITMQ_URL,
-        queue=cfg.RABBITMQ_QUEUE
+def _session_resource():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+class Container(containers.DeclarativeContainer):
+    wiring_config = containers.WiringConfiguration(
+        modules=[
+            "app.interfaces.http.users_controller",
+            "app.modules.users.interfaces.consumer",
+        ]
     )
 
-def get_user_repository(session: Session = Depends(get_session)) -> SqlAlchemyUserRepository:
-    return SqlAlchemyUserRepository(session)
+    # --- Config ---
+    config = providers.Object(settings)
 
-def get_create_user_handler(
-    publisher: RabbitMQPublisher = Depends(get_publisher),
-) -> CreateUserHandler:
-    return CreateUserHandler(publisher=publisher)
+    # --- Recursos base / Infra ---
+    db_session = providers.Resource(_session_resource)
 
-def get_persist_user_handler(
-    repo: SqlAlchemyUserRepository = Depends(get_user_repository),
-) -> PersistUserHandler:
-    return PersistUserHandler(repo=repo)
+    publisher = providers.Factory(
+        RabbitMQPublisher,
+        url=config.provided.RABBITMQ_URL,
+        queue=config.provided.RABBITMQ_QUEUE,
+    )
 
-def get_user_by_id_handler(
-    repo: SqlAlchemyUserRepository = Depends(get_user_repository),
-) -> GetUserByIdHandler:
-    return GetUserByIdHandler(repo)
+    user_repository = providers.Factory(
+        SqlAlchemyUserRepository,
+        session=db_session,
+    )
+
+    password_policy = providers.Factory(PasswordPolicy)
+
+    # --- Handlers ---
+    publish_user_handler = providers.Factory(
+        PublishUserHandler,
+        publisher=publisher,
+    )
+
+    get_user_by_id_handler = providers.Factory(
+        GetUserByIdHandler,
+        repo=user_repository,
+    )
+
+    persist_user_handler = providers.Factory(
+        PersistUserHandler,
+        repo=user_repository,
+        policy=password_policy,
+    )
