@@ -26,6 +26,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       RABBITMQ_URL: ${RABBITMQ_URL}
       RABBITMQ_QUEUE: ${RABBITMQ_QUEUE}
+      PYTHONPATH: /src  
     depends_on:
       db:
         condition: service_healthy

@@ -1,0 +1,23 @@
+import pytest
+from modules.users.domain.ports.user_repository import UserRepository
+
+class FakeUserRepository(UserRepository):
+    def __init__(self):
+        self._users = {}
+
+    def save(self, user):
+        self._users[user.email] = user
+        return user
+
+    def get_by_id(self, user_id: int):
+        return next((u for u in self._users.values() if u.id == user_id), None)
+
+def test_save_and_get_user():
+    from modules.users.domain.entities.user import User
+    repo = FakeUserRepository()
+    user = User(id=1, name="Ana", email="ana@test.com", password="hashed")
+    repo.save(user)
+
+    found = repo.get_by_id(1)
+    assert found is not None
+    assert found.email == "ana@test.com"
