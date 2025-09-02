@@ -120,13 +120,25 @@ Esto ejecuta todos los tests y muestra la cobertura del **dominio**, la cual deb
 
 ```text
 src/
-├── app/                  # Entrypoint FastAPI
-├── core/                 # Config, contenedor DI, base
+├── app/                        # Entrypoint FastAPI
+├── core/                       # Config, contenedor DI, base
 ├── modules/
-│   └── users/            # Contexto Users (Dominio, Aplicación, Infraestructura)
-│   └── auth/             # Contexto Auth (placeholder)
-tests/                    # Pruebas unitarias e integración
+│   ├── users/                  # Contexto Users (Dominio, Aplicación, Infraestructura)
+│   │   ├── application/        # Commands, Queries, DTOs, Mappers
+│   │   ├── domain/             # Entities, ValueObjects, Specs, Policies, Ports, Errors
+│   │   └── infrastructure/     # Repositories, Schemas, Adapters (RabbitMQ, DB, etc.)
+│   └── auth/                   # Contexto Auth (placeholder)
+tests/
+├── unit/                       # Pruebas unitarias (domain, application)
+└── integration/                # Pruebas de integración (infraestructura, API)
 ```
+  - `src/`: código productivo.
+  - `app/`: puntos de entrada (FastAPI, routers HTTP).
+  - `core/`: configuración transversal (DB, contenedor DI, responses).
+  - `modules/`: contexts (users, auth) organizados en domain / application / infrastructure.
+  - `tests/`: pruebas unitarias e integración.
+  - `unit/`: tests de dominio y aplicación aislados.
+  - `shared/`: fakes, fixtures y configuraciones de pytest.
 
 ---
 
@@ -166,4 +178,10 @@ docker compose run --rm worker
 2. **Infraestructura desacoplada**: adaptadores para DB y RabbitMQ.
 3. **CQRS estricto**: comandos no retornan datos, consultas no modifican estado.
 4. **Escalabilidad**: fácil agregar nuevos contexts (`billing`, `notifications`, etc.).
+5. **Inyección de dependencias**: centralizada en `core/container.py` con `dependency-injector`.
+6. **DTOs y Mappers**: evitan exponer entidades directamente y aíslan el dominio de la capa de transporte.
+7. **Manejo de errores**: excepciones de dominio claras (ej. `UserNotFoundError`, `PasswordPolicyError`).
+8. **Pruebas dirigidas al dominio**: cobertura ≥80% para garantizar reglas de negocio robustas.
+9. **Seguridad básica**: contraseñas almacenadas con hash seguro (bcrypt).
+10. **Mensajería asíncrona**: RabbitMQ permite desacoplar commands y dar resiliencia.
 
