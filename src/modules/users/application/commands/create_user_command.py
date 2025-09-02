@@ -1,7 +1,6 @@
-# app/modules/users/application/commands.py
 from dataclasses import dataclass
 
-
+# --- Comando para crear un usuario ---
 @dataclass
 class CreateUserCommand:
     name: str

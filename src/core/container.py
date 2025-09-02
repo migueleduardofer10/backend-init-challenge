@@ -9,6 +9,7 @@ from modules.users.application.commands import PublishUserHandler, PersistUserHa
 from modules.users.application.queries import GetUserByIdQuery, GetUserByIdHandler
 from modules.users.domain.policies import PasswordPolicy
 
+# --- Recurso para manejar la sesión de DB ---
 def _session_resource():
     db = SessionLocal()
     try:
@@ -16,6 +17,7 @@ def _session_resource():
     finally:
         db.close()
 
+# --- Contenedor principal de dependencias ---
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
@@ -23,10 +25,10 @@ class Container(containers.DeclarativeContainer):
         ]
     )
 
-    # --- Config ---
+    # --- Configuración (variables de entorno) ---
     config = providers.Object(settings)
 
-    # --- Recursos base / Infra ---
+    # --- Recursos base / Infraestructura ---
     db_session = providers.Resource(_session_resource)
 
     publisher = providers.Factory(

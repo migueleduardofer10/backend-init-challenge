@@ -4,11 +4,12 @@ from modules.users.domain.errors import EmailInvalidError
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
-
+# --- Value Object para Email ---
 @dataclass(frozen=True)
 class Email:
     value: str
 
+    # --- Validar formato del email ---
     def __post_init__(self):
         v = self.value.strip().lower()
         if not EMAIL_RE.match(v):

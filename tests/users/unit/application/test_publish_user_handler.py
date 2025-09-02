@@ -1,14 +1,17 @@
+# --- Tests de PublishUserHandler ---
 from modules.users.application.commands import PublishUserHandler
 from modules.users.application.commands import CreateUserCommand
 from modules.users.domain.policies import PasswordPolicy
 from core.base.response import Response
 
+# --- Fake publisher para pruebas ---
 class FakePublisher:
     def __init__(self):
         self.called = False
     def publish_create_user(self, **kwargs):
         self.called = True
 
+# --- Test publicación exitosa ---
 def test_publish_handler_success():
     handler = PublishUserHandler(FakePublisher(), PasswordPolicy())
     cmd = CreateUserCommand(name="Ana", email="ana@test.com", password="StrongPass1")
@@ -16,6 +19,7 @@ def test_publish_handler_success():
     assert resp.status_code == 200
     assert resp.message == "User command published"
 
+# --- Test publicación no exitosa (email inválido) ---
 def test_publish_handler_invalid_email():
     handler = PublishUserHandler(FakePublisher(), PasswordPolicy())
     cmd = CreateUserCommand(name="Ana", email="bad-email", password="StrongPass1")

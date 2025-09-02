@@ -1,5 +1,6 @@
+# --- Modelo SQLAlchemy para tabla users ---
 from sqlalchemy import Column, Integer, String
-from core.db import Base  # ajusta import si tu Base está en otro path
+from core.db import Base 
 
 class UserModel(Base):
     __tablename__ = "users"

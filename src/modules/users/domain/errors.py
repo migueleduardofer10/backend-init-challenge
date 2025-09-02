@@ -1,3 +1,4 @@
+# --- Errores de dominio ---
 class DomainError(Exception):
     """Base para errores de dominio."""
 

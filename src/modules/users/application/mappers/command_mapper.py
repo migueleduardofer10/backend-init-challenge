@@ -2,6 +2,7 @@ import bcrypt
 from modules.users.application.commands import CreateUserCommand
 from modules.users.domain.entities.user import User
 
+# --- Mapper de comando a entidad User ---
 class UserCommandMapper:
     @staticmethod
     def to_entity(command: CreateUserCommand) -> User:

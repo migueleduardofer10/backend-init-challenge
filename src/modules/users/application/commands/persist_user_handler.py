@@ -9,17 +9,18 @@ from modules.users.domain.value_objects import Email
 from modules.users.domain.specs import EnsureEmailIsUnique
 import bcrypt
 
+# --- Handler para persistir usuario en bd ---
 class PersistUserHandler:
     def __init__(self, repo: UserRepository, password_policy: PasswordPolicy):
         self.repo = repo
         self.password_policy = password_policy
 
     def handle(self, command: CreateUserCommand) -> Response[UserResponseDTO]:
-        email_vo = Email(command.email)
-        EnsureEmailIsUnique(self.repo).check(email_vo)
-        self.password_policy.validate(command.password) 
-        hashed = bcrypt.hashpw(command.password.encode(), bcrypt.gensalt()).decode()
-        entity = UserCommandMapper.to_entity(command)
-        saved = self.repo.save(entity)
+        email_vo = Email(command.email)                                                    # VO de email
+        EnsureEmailIsUnique(self.repo).check(email_vo)                                     # Validar email único
+        self.password_policy.validate(command.password)                                    # Validar contraseña
+        hashed = bcrypt.hashpw(command.password.encode(), bcrypt.gensalt()).decode()       # Hashear contraseña
+        entity = UserCommandMapper.to_entity(command)                                      
+        saved = self.repo.save(entity)                                                      
         dto = UserResponseMapper.from_entity(saved)
         return Response.success(dto, message="User created")

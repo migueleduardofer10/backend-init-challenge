@@ -10,6 +10,7 @@ from modules.users.application.queries import GetUserByIdQuery, GetUserByIdHandl
 
 router = APIRouter(prefix="/users", tags=["users"])
 
+# --- Endpoint para crear un usuario ---
 @router.post("/")
 @inject
 def create_user(
@@ -20,6 +21,7 @@ def create_user(
     resp = handler.handle(command)
     return resp.__dict__
 
+# --- Endpoint para obtener un usuario por ID ---
 @router.get("/{user_id}")
 @inject
 def get_user(

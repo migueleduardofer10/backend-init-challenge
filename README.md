@@ -133,11 +133,11 @@ tests/
 └── integration/                # Pruebas de integración (infraestructura, API)
 ```
   - `src/`: código productivo.
-  - `app/`: puntos de entrada (FastAPI, routers HTTP).
-  - `core/`: configuración transversal (DB, contenedor DI, responses).
-  - `modules/`: contexts (users, auth) organizados en domain / application / infrastructure.
+    - `app/`: puntos de entrada (FastAPI, routers HTTP).
+    - `core/`: configuración transversal (DB, contenedor DI, responses).
+    - `modules/`: contexts (users, auth) organizados en domain / application / infrastructure.
   - `tests/`: pruebas unitarias e integración.
-  - `unit/`: tests de dominio y aplicación aislados.
+    - `unit/`: tests de dominio y aplicación aislados.
 ---
 
 ## 🏗️ Arquitectura

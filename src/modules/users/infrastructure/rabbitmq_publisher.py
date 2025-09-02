@@ -1,6 +1,7 @@
 import json
 import pika
 
+# --- Publisher RabbitMQ para crear usuarios ---
 class RabbitMQPublisher:
     def __init__(self, url: str, queue: str):
         self.url = url
@@ -17,7 +18,7 @@ class RabbitMQPublisher:
                 exchange="",
                 routing_key=self.queue,
                 body=json.dumps(payload).encode(),
-                properties=pika.BasicProperties(delivery_mode=2),
+                properties=pika.BasicProperties(delivery_mode=2),       # mensaje persistente
             )
         finally:
             connection.close()

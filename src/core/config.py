@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+# --- Cargar variables de entorno ---
 class Settings(BaseSettings):
     # --- APP ---
     APP_ENV: str = "dev"

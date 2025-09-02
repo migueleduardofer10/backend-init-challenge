@@ -4,6 +4,7 @@ from enum import Enum
 from modules.users.domain.value_objects import Email
 from modules.users.domain.errors import InvalidStateTransitionError
 
+# --- Estados posibles del usuario ---
 class UserStatus(str, Enum):
     ACTIVE = "ACTIVE"
     SUSPENDED = "SUSPENDED"
@@ -13,12 +14,14 @@ class UserStatus(str, Enum):
         self._validate_name()
 
 
+# --- Entidad de dominio User ---
 @dataclass
 class User:
     id: int | None
     name: str
     email: Email
     hashed_password: str
+
     ## -- Campos Bitácora --- 
     status: UserStatus = UserStatus.ACTIVE
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
@@ -67,5 +70,6 @@ class User:
         self.status = UserStatus.DELETED
         self._touch()
 
+    # --- Actualizar timestamp ---
     def _touch(self):
         self.updated_at = datetime.now(timezone.utc)

@@ -5,7 +5,7 @@ from core.base.response import Response
 from modules.users.domain.value_objects import Email
 from modules.users.domain.policies import PasswordPolicy
 
-
+# --- Handler para publicar usuario en RabbitMQ ---
 class PublishUserHandler:
     def __init__(self, publisher: RabbitMQPublisher, password_policy: PasswordPolicy):
         self.publisher = publisher
@@ -13,11 +13,12 @@ class PublishUserHandler:
 
     def handle(self, command: CreateUserCommand) -> Response[None]:
         try:
-            Email(command.email) 
-            self.password_policy.validate(command.password) 
+            Email(command.email)                                # Validar email
+            self.password_policy.validate(command.password)     # Validar contraseña
         except Exception as e:
             return Response.error(str(e), status_code=422)
 
+        # --- Publicar comando ---
         self.publisher.publish_create_user(
             name=command.name,
             email=command.email,

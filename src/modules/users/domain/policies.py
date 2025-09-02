@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from modules.users.domain.errors import PasswordPolicyError
 
-
+# --- Política de validación de contraseñas ---
 @dataclass(frozen=True)
 class PasswordPolicy:
     min_length: int = 8
@@ -10,6 +10,7 @@ class PasswordPolicy:
     require_digit: bool = True
     require_symbol: bool = False
 
+    # --- Validar contraseña ---
     def validate(self, raw_password: str) -> None:
         p = raw_password or ""
         if len(p) < self.min_length:
