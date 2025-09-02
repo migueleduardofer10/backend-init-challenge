@@ -1,6 +1,7 @@
 import bcrypt
 from modules.users.application.commands import CreateUserCommand
 from modules.users.domain.entities.user import User
+from modules.users.domain.value_objects import Email
 
 # --- Mapper de comando a entidad User ---
 class UserCommandMapper:
@@ -10,6 +11,6 @@ class UserCommandMapper:
         return User(
             id=None,
             name=command.name,
-            email=command.email,
+            email=Email(command.email),
             hashed_password=hashed
         )

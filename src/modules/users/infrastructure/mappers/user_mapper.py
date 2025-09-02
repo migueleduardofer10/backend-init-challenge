@@ -1,5 +1,6 @@
 from modules.users.domain.entities.user import User
 from modules.users.infrastructure.schemas.user_model import UserModel
+from modules.users.domain.value_objects import Email
 
 # --- Mapper entre UserModel (DB) y User (entidad) ---
 class UserMapper:
